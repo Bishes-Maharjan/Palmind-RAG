@@ -40,14 +40,13 @@ class Settings(BaseSettings):
     qdrant_api_key: str | None = Field(default=None, alias="QDRANT_API_KEY")
     qdrant_collection_name: str = Field(default="document_chunks", alias="QDRANT_COLLECTION_NAME")
 
-    # LLM & Embeddings (OpenAI / OpenAI-compatible endpoint)
-    openai_api_key: str = Field(default="mock-key-for-local", alias="OPENAI_API_KEY")
-    openai_base_url: str | None = Field(default=None, alias="OPENAI_BASE_URL")
-    openai_chat_model: str = Field(default="gpt-4o-mini", alias="OPENAI_CHAT_MODEL")
-    openai_embedding_model: str = Field(
-        default="text-embedding-3-small", alias="OPENAI_EMBEDDING_MODEL"
+    # LLM & Embeddings (Google Gemini)
+    gemini_api_key: str = Field(default="mock-key-for-local", alias="GEMINI_API_KEY")
+    gemini_chat_model: str = Field(default="gemini-3.5-flash-lite", alias="GEMINI_CHAT_MODEL")
+    gemini_embedding_model: str = Field(
+        default="gemini-embedding-2", alias="GEMINI_EMBEDDING_MODEL"
     )
-    openai_embedding_dimensions: int = Field(default=1536, alias="OPENAI_EMBEDDING_DIMENSIONS")
+    gemini_embedding_dimensions: int = Field(default=768, alias="GEMINI_EMBEDDING_DIMENSIONS")
 
     # Ingestion & RAG
     max_upload_size_bytes: int = Field(

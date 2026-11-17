@@ -9,11 +9,11 @@ from app.core.config import Settings, get_settings
 from app.db.session import get_db_session
 from app.services.booking import BookingService
 from app.services.embeddings.base import Embedder
+from app.services.embeddings.gemini import GeminiEmbedder
 from app.services.embeddings.mock import MockEmbedder
-from app.services.embeddings.openai import OpenAIEmbedder
 from app.services.llm.base import LLMClient
+from app.services.llm.gemini import GeminiLLMClient
 from app.services.llm.mock import MockLLMClient
-from app.services.llm.openai import OpenAILLMClient
 from app.services.memory import MemoryService, RedisMemoryService
 from app.services.rag import RAGService
 from app.services.vector_store import QdrantVectorStore, VectorStore
@@ -34,17 +34,16 @@ def get_embedder(settings: Annotated[Settings, Depends(get_current_settings)]) -
     """Provide configured Embedder instance."""
     global _embedder
     if _embedder is None:
-        if settings.openai_api_key in {"mock-key-for-local", "test-key"}:
+        if settings.gemini_api_key in {"mock-key-for-local", "test-key"}:
             _embedder = MockEmbedder(
-                dimension=settings.openai_embedding_dimensions,
-                model_name=settings.openai_embedding_model,
+                dimension=settings.gemini_embedding_dimensions,
+                model_name=settings.gemini_embedding_model,
             )
         else:
-            _embedder = OpenAIEmbedder(
-                api_key=settings.openai_api_key,
-                model=settings.openai_embedding_model,
-                dimension=settings.openai_embedding_dimensions,
-                base_url=settings.openai_base_url,
+            _embedder = GeminiEmbedder(
+                api_key=settings.gemini_api_key,
+                model=settings.gemini_embedding_model,
+                dimension=settings.gemini_embedding_dimensions,
             )
     return _embedder
 
@@ -53,13 +52,12 @@ def get_llm_client(settings: Annotated[Settings, Depends(get_current_settings)])
     """Provide configured LLMClient instance."""
     global _llm_client
     if _llm_client is None:
-        if settings.openai_api_key in {"mock-key-for-local", "test-key"}:
+        if settings.gemini_api_key in {"mock-key-for-local", "test-key"}:
             _llm_client = MockLLMClient()
         else:
-            _llm_client = OpenAILLMClient(
-                api_key=settings.openai_api_key,
-                model=settings.openai_chat_model,
-                base_url=settings.openai_base_url,
+            _llm_client = GeminiLLMClient(
+                api_key=settings.gemini_api_key,
+                model=settings.gemini_chat_model,
             )
     return _llm_client
 
@@ -71,7 +69,7 @@ def get_vector_store(settings: Annotated[Settings, Depends(get_current_settings)
         _vector_store = QdrantVectorStore(
             url=settings.qdrant_url,
             collection_name=settings.qdrant_collection_name,
-            vector_dimension=settings.openai_embedding_dimensions,
+            vector_dimension=settings.gemini_embedding_dimensions,
             api_key=settings.qdrant_api_key,
         )
     return _vector_store

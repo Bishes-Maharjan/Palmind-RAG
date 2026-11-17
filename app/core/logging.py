@@ -29,7 +29,7 @@ def setup_logging(log_level: str = "INFO") -> logging.Logger:
     logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
-    logging.getLogger("openai").setLevel(logging.WARNING)
+    logging.getLogger("google.genai").setLevel(logging.WARNING)
 
     logger = logging.getLogger("app")
     logger.setLevel(level)

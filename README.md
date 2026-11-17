@@ -25,8 +25,8 @@ flowchart TD
 
         Extractor["Text Extraction Service\n(PDF / TXT with 422 guards)"]
         ChunkerFactory["Chunker Factory\n(Fixed | Semantic)"]
-        Embedder["Embedder Protocol\n(OpenAI / Mock)"]
-        LLM["LLMClient Protocol\n(OpenAI / Mock)"]
+        Embedder["Embedder Protocol\n(Gemini / Mock)"]
+        LLM["LLMClient Protocol\n(Gemini / Mock)"]
         BookingService["Booking Service\n(Slot filling, Validation, Interrupt/Resume)"]
         RAGService["Manual RAG Pipeline\n(Defensive Prompt, Citations)"]
     end
@@ -110,7 +110,7 @@ To spin up the entire stack (PostgreSQL, Redis, Qdrant, and the FastAPI applicat
 # 1. Clone repository and copy environment configuration
 cp .env.example .env
 
-# Optional: Add your OpenAI API key in .env if testing against live OpenAI endpoints.
+# Optional: Add your Gemini API key in .env if testing against live Gemini endpoints.
 # If omitted, the service runs in offline mock mode automatically.
 
 # 2. Build and launch services
@@ -187,11 +187,10 @@ The project includes a `Makefile` automating common quality workflows:
 | `QDRANT_URL` | `str` | `http://localhost:6333` | Qdrant vector database URL |
 | `QDRANT_API_KEY` | `str` | `None` | Optional Qdrant API key |
 | `QDRANT_COLLECTION_NAME` | `str` | `document_chunks` | Qdrant vector collection name |
-| `OPENAI_API_KEY` | `str` | `mock-key-for-local` | OpenAI API key (falls back to offline mock if placeholder) |
-| `OPENAI_BASE_URL` | `str` | `None` | Optional OpenAI-compatible base URL |
-| `OPENAI_CHAT_MODEL` | `str` | `gpt-4o-mini` | Chat completion model |
-| `OPENAI_EMBEDDING_MODEL`| `str` | `text-embedding-3-small`| Dense embedding model |
-| `OPENAI_EMBEDDING_DIMENSIONS` | `int` | `1536` | Embedding vector dimensionality |
+| `GEMINI_API_KEY` | `str` | `mock-key-for-local` | Google Gemini API key (falls back to offline mock if placeholder) |
+| `GEMINI_CHAT_MODEL` | `str` | `gemini-3.5-flash-lite` | Gemini chat model |
+| `GEMINI_EMBEDDING_MODEL`| `str` | `gemini-embedding-2`| Gemini dense embedding model |
+| `GEMINI_EMBEDDING_DIMENSIONS` | `int` | `768` | Embedding vector dimensionality (768, 1536, or 3072) |
 | `MAX_UPLOAD_SIZE_BYTES` | `int` | `10485760` | Maximum upload file size (10 MB) |
 | `RAG_TOP_K` | `int` | `4` | Number of chunks retrieved for RAG context |
 | `RAG_SCORE_THRESHOLD` | `float` | `0.3` | Minimum cosine similarity score cutoff |
