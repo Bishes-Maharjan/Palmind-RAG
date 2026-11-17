@@ -1,0 +1,23 @@
+# PalmMind Technologies - Engineering Handbook & Candidate Guide
+
+## About Us
+PalmMind Technologies is an AI infrastructure company building real-time data pipelines and conversational knowledge systems for mission-critical enterprise workflows. Our core values emphasize engineering rigor, type safety, modular architecture, and continuous learning.
+
+## Technology Stack
+Our backend services are built primarily with Python 3.11+ using FastAPI, SQLAlchemy 2.0 with asyncpg, and Alembic for relational migrations. For vector search, we run Qdrant clusters using cosine distance metrics and dense vector embeddings. Redis serves as our low-latency caching and session state persistence engine. All microservices are containerized with Docker and orchestrated using Kubernetes and Docker Compose.
+
+## Interview Process
+We structure our hiring process to be transparent, respectful of candidate time, and focused on practical craftsmanship:
+1. Recruiter Screen (30 minutes): High-level discussion about career journey, expectations, and culture alignment.
+2. Technical Take-Home Project: A realistic scenario (such as this RAG API) evaluated for design, type safety, code clarity, and test coverage.
+3. Architecture & Technical Deep Dive (60 minutes): Discussion of your design choices, trade-offs, chunking strategies, and performance characteristics.
+4. Final Team & Values Fit (45 minutes): Meet your prospective teammates and engineering leadership.
+
+## Interview Booking Policies
+Candidates can schedule their technical deep-dive interviews through our automated conversational assistant. When scheduling, you will need to provide:
+- Candidate Full Name
+- Primary Contact Email
+- Preferred Interview Date (must be today or a future business day)
+- Preferred Interview Time (in 24-hour format, between 09:00 and 17:00 UTC)
+
+Once all details are confirmed, a reservation ID will be generated and saved in our scheduling database.
