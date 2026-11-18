@@ -25,8 +25,8 @@ flowchart TD
 
         Extractor["Text Extraction Service\n(PDF / TXT with 422 guards)"]
         ChunkerFactory["Chunker Factory\n(Fixed | Semantic)"]
-        Embedder["Embedder Protocol\n(Gemini / Mock)"]
-        LLM["LLMClient Protocol\n(Gemini / Mock)"]
+        Embedder["Embedder Protocol\n(Google Gemini)"]
+        LLM["LLMClient Protocol\n(Google Gemini)"]
         BookingService["Booking Service\n(Slot filling, Validation, Interrupt/Resume)"]
         RAGService["Manual RAG Pipeline\n(Defensive Prompt, Citations)"]
     end
@@ -98,7 +98,7 @@ flowchart TD
    - Linting & formatting: clean `ruff check` and `ruff format`.
    - Pluggable Protocols: `Embedder`, `LLMClient`, `Chunker`, `VectorStore`, `MemoryService`.
    - Centralized exception hierarchy mapping domain errors to uniform JSON error envelopes.
-   - Comprehensive test suite (31 unit & API integration tests) runnable offline.
+   - Clean, modular architecture with strict static typing via `mypy --strict`.
 
 ---
 
@@ -110,8 +110,8 @@ To spin up the entire stack (PostgreSQL, Redis, Qdrant, and the FastAPI applicat
 # 1. Clone repository and copy environment configuration
 cp .env.example .env
 
-# Optional: Add your Gemini API key in .env if testing against live Gemini endpoints.
-# If omitted, the service runs in offline mock mode automatically.
+# Add your Gemini API key in .env
+# If omitted, the service will not be able to function properly.
 
 # 2. Build and launch services
 make up
@@ -161,12 +161,11 @@ The project includes a `Makefile` automating common quality workflows:
 
 | Command | Action |
 | :--- | :--- |
-| `make up` | Start backing services and API via Docker Compose |
+| `make up` | Start backing services and API via Docker Compose (`docker compose up --build -d`) |
 | `make down` | Stop and remove all Docker containers and volumes |
-| `make test` | Execute unit and integration tests via `pytest -v` |
 | `make lint` | Run code quality checks via `ruff check .` |
 | `make format` | Auto-format codebase using `ruff format .` |
-| `make typecheck` | Run static type analysis using `mypy app tests` |
+| `make typecheck` | Run static type analysis using `mypy app` |
 | `make migrate` | Apply latest Alembic database migrations |
 | `make run` | Launch FastAPI app locally with auto-reload |
 
@@ -187,7 +186,7 @@ The project includes a `Makefile` automating common quality workflows:
 | `QDRANT_URL` | `str` | `http://localhost:6333` | Qdrant vector database URL |
 | `QDRANT_API_KEY` | `str` | `None` | Optional Qdrant API key |
 | `QDRANT_COLLECTION_NAME` | `str` | `document_chunks` | Qdrant vector collection name |
-| `GEMINI_API_KEY` | `str` | `mock-key-for-local` | Google Gemini API key (falls back to offline mock if placeholder) |
+| `GEMINI_API_KEY` | `str` | `""` | Google Gemini API key (required) |
 | `GEMINI_CHAT_MODEL` | `str` | `gemini-3.5-flash-lite` | Gemini chat model |
 | `GEMINI_EMBEDDING_MODEL`| `str` | `gemini-embedding-2`| Gemini dense embedding model |
 | `GEMINI_EMBEDDING_DIMENSIONS` | `int` | `768` | Embedding vector dimensionality (768, 1536, or 3072) |
