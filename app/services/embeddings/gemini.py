@@ -1,5 +1,7 @@
 """Google Gemini embedding provider implementation."""
 
+import asyncio
+
 from google import genai
 from google.genai import types
 
@@ -29,32 +31,28 @@ class GeminiEmbedder(Embedder):
     def model_name(self) -> str:
         return self._model
 
+    async def _embed_single(self, text: str) -> list[float]:
+        """Embed a single text string."""
+        response = await self._client.aio.models.embed_content(
+            model=self._model,
+            contents=text,
+            config=types.EmbedContentConfig(
+                output_dimensionality=self._dimension,
+            ),
+        )
+        if response.embeddings and response.embeddings[0].values is not None:
+            return response.embeddings[0].values
+        return [0.0] * self._dimension
+
     async def embed_texts(self, texts: list[str]) -> list[list[float]]:
-        """Generate embeddings for a batch of text passages."""
+        """Generate embeddings for a batch of text passages concurrently."""
         if not texts:
             return []
 
-        all_embeddings: list[list[float]] = []
-
-        for i in range(0, len(texts), self._batch_size):
-            batch = texts[i : i + self._batch_size]
-            response = await self._client.aio.models.embed_content(
-                model=self._model,
-                contents=batch,
-                config=types.EmbedContentConfig(
-                    output_dimensionality=self._dimension,
-                ),
-            )
-            if response.embeddings:
-                for emb in response.embeddings:
-                    if emb.values is not None:
-                        all_embeddings.append(emb.values)
-
-        return all_embeddings
+        # Concurrently generate embeddings for all chunks guaranteeing 1-to-1 ordering
+        tasks = [self._embed_single(t) for t in texts]
+        return await asyncio.gather(*tasks)
 
     async def embed_query(self, text: str) -> list[float]:
         """Generate embedding vector for a single search query."""
-        results = await self.embed_texts([text])
-        if not results:
-            return [0.0] * self._dimension
-        return results[0]
+        return await self._embed_single(text)
