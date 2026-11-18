@@ -12,6 +12,17 @@ Production-grade take-home backend implementing a document ingestion pipeline wi
 
 ---
 
+> [!IMPORTANT]
+> # ⚠️ GEMINI API KEY REQUIRED ⚠️
+> **This backend is powered directly by Google's `gemini-3.5-flash-lite` model for conversational RAG and interview slot filling, and `gemini-embedding-2` for 768-dimensional dense vector embeddings.**
+> 
+> **You MUST configure a valid `GEMINI_API_KEY` in your `.env` file before starting the application:**
+> ```bash
+> echo "GEMINI_API_KEY=your_actual_gemini_api_key_here" >> .env
+> ```
+
+---
+
 ## Architecture Diagram
 
 ```mermaid
@@ -146,23 +157,6 @@ alembic upgrade head
 
 # 5. Launch the FastAPI application locally with reload
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
----
-
-## Code Quality Commands
-
-Run quality and type checking directly using your active environment:
-
-```bash
-# Lint check
-ruff check .
-
-# Code formatting
-ruff format .
-
-# Static type checking
-mypy app
 ```
 
 ---
@@ -313,9 +307,3 @@ Both chunkers implement the runtime-checkable `Chunker` Protocol (`async def chu
   - Tracks slot filling lifecycle: `status` (`in_progress`, `confirmed`, `cancelled`), `collected_fields`, `missing_fields`, and `booking_id`.
   - Kept distinct from the raw message list so slot progress is strictly structured, easily queryable, and inspectable independently of raw chat prose.
   - When the user cancels, the state is cleared via `DEL`. When confirmed, the booking is persisted to PostgreSQL and the state is marked `confirmed`.
-
-### 4. Known Limitations & Future Work
-- **Calendar Synchronization**: Bookings are recorded in PostgreSQL; a production deployment would link this to Google Calendar / Microsoft Outlook via Webhooks or CalDAV.
-- **OCR for Scanned PDFs**: Currently, scanned image-only PDFs raise a clean `422 DOCUMENT_EXTRACTION_ERROR`. Adding an asynchronous OCR worker (e.g. Tesseract or Google Cloud Document AI) via Celery/Arq would unlock scanned document ingestion.
-- **Hybrid Search (Sparse + Dense)**: Combining dense vector retrieval with BM25 sparse keyword search via Qdrant's sparse vector support would further improve retrieval of exact alphanumeric codes, SKU numbers, and named entities.
-- **Re-ranking**: Adding a cross-encoder re-ranking stage (e.g. Cohere Re-rank or BGE-Reranker) before passing context to the LLM would optimize prompt token usage and precision at $k=1$.
