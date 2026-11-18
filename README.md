@@ -107,15 +107,12 @@ flowchart TD
 To spin up the entire stack (PostgreSQL, Redis, Qdrant, and the FastAPI application) in one command:
 
 ```bash
-# 1. Clone repository and copy environment configuration
+# 1. Copy environment configuration and configure your Gemini API key
 cp .env.example .env
-
-# Add your Gemini API key in .env
-# If omitted, the service will not be able to function properly.
+# Edit .env and set: GEMINI_API_KEY=your_key_here
 
 # 2. Build and launch services
-make up
-# or: docker-compose up --build -d
+docker compose up --build -d
 ```
 
 Verify service readiness:
@@ -125,49 +122,48 @@ curl http://localhost:8000/health
 
 Stop services:
 ```bash
-make down
+docker compose down
 ```
 
 ---
 
-## Local Development Setup
+## Local Development (Without Docker)
 
-To run directly on macOS or Linux with a local Python 3.11+ environment:
+If you prefer to run directly on macOS/Linux with a local Python 3.11+ environment:
 
 ```bash
-# 1. Activate your virtual environment (e.g. source ~/myenv/bin/activate)
+# 1. Activate your virtual environment
 source ~/myenv/bin/activate
 
 # 2. Install dependencies
 pip install -e ".[dev]"
 
-# 3. Start backing services (Postgres, Redis, Qdrant) via docker-compose
-docker-compose up -d postgres redis qdrant
+# 3. Start backing services (Postgres, Redis, Qdrant) via Docker Compose
+docker compose up -d postgres redis qdrant
 
-# 4. Run database migrations
-make migrate
-# or: alembic upgrade head
+# 4. Apply database migrations
+alembic upgrade head
 
-# 5. Start the local API server
-make run
-# or: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+# 5. Launch the FastAPI application locally with reload
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ---
 
-## Development & Testing Commands
+## Code Quality Commands
 
-The project includes a `Makefile` automating common quality workflows:
+Run quality and type checking directly using your active environment:
 
-| Command | Action |
-| :--- | :--- |
-| `make up` | Start backing services and API via Docker Compose (`docker compose up --build -d`) |
-| `make down` | Stop and remove all Docker containers and volumes |
-| `make lint` | Run code quality checks via `ruff check .` |
-| `make format` | Auto-format codebase using `ruff format .` |
-| `make typecheck` | Run static type analysis using `mypy app` |
-| `make migrate` | Apply latest Alembic database migrations |
-| `make run` | Launch FastAPI app locally with auto-reload |
+```bash
+# Lint check
+ruff check .
+
+# Code formatting
+ruff format .
+
+# Static type checking
+mypy app
+```
 
 ---
 
