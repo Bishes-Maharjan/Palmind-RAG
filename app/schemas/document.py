@@ -31,18 +31,10 @@ class DocumentMetadata(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class DocumentUploadResponse(BaseModel):
+class DocumentUploadResponse(DocumentMetadata):
     """Response returned upon successful document ingestion."""
 
-    id: str = Field(description="Generated unique document identifier")
-    filename: str = Field(description="Original uploaded file name")
-    content_type: str = Field(description="File MIME type")
-    size_bytes: int = Field(description="File size in bytes")
-    chunking_strategy: ChunkingStrategy = Field(description="Chunking strategy applied")
-    chunk_count: int = Field(description="Total chunks generated and stored")
-    embedding_model: str = Field(description="Model used for vector embeddings")
-    status: str = Field(default="processed", description="Processing status")
-    created_at: datetime = Field(description="Ingestion timestamp")
+    pass
 
 
 class DocumentListResponse(BaseModel):

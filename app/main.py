@@ -1,7 +1,7 @@
 """Main FastAPI application entry point with lifespan management and global exception handlers."""
 
 import logging
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, status
@@ -24,7 +24,7 @@ logger = logging.getLogger("app.main")
 
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+async def lifespan(_app: FastAPI) -> AsyncGenerator[None]:
     """Application lifespan context manager for startup and shutdown routines."""
     logger.info("Starting up palmmind-rag application...")
 

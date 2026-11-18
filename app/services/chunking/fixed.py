@@ -35,7 +35,6 @@ class FixedChunker(Chunker):
         while start < text_len:
             end = min(start + self.chunk_size, text_len)
 
-            # If not at the end of the text, look for a natural break (space, newline)
             if end < text_len:
                 # Search backwards for whitespace within the last 20% of the chunk window
                 lookback_limit = max(start, end - int(self.chunk_size * 0.2))

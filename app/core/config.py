@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     qdrant_collection_name: str = Field(default="document_chunks", alias="QDRANT_COLLECTION_NAME")
 
     # LLM & Embeddings (Google Gemini)
-    gemini_api_key: str = Field(default="mock-key-for-local", alias="GEMINI_API_KEY")
+    gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
     gemini_chat_model: str = Field(default="gemini-3.5-flash-lite", alias="GEMINI_CHAT_MODEL")
     gemini_embedding_model: str = Field(
         default="gemini-embedding-2", alias="GEMINI_EMBEDDING_MODEL"

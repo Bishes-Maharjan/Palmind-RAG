@@ -6,14 +6,13 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings, get_settings
+from app.core.exceptions import ServiceUnavailableError
 from app.db.session import get_db_session
 from app.services.booking import BookingService
 from app.services.embeddings.base import Embedder
 from app.services.embeddings.gemini import GeminiEmbedder
-from app.services.embeddings.mock import MockEmbedder
 from app.services.llm.base import LLMClient
 from app.services.llm.gemini import GeminiLLMClient
-from app.services.llm.mock import MockLLMClient
 from app.services.memory import MemoryService, RedisMemoryService
 from app.services.rag import RAGService
 from app.services.vector_store import QdrantVectorStore, VectorStore
@@ -31,34 +30,33 @@ def get_current_settings() -> Settings:
 
 
 def get_embedder(settings: Annotated[Settings, Depends(get_current_settings)]) -> Embedder:
-    """Provide configured Embedder instance."""
+    """Provide configured Gemini Embedder instance."""
     global _embedder
     if _embedder is None:
-        if settings.gemini_api_key in {"mock-key-for-local", "test-key"}:
-            _embedder = MockEmbedder(
-                dimension=settings.gemini_embedding_dimensions,
-                model_name=settings.gemini_embedding_model,
+        if not settings.gemini_api_key:
+            raise ServiceUnavailableError(
+                "Gemini", "GEMINI_API_KEY environment variable is not configured."
             )
-        else:
-            _embedder = GeminiEmbedder(
-                api_key=settings.gemini_api_key,
-                model=settings.gemini_embedding_model,
-                dimension=settings.gemini_embedding_dimensions,
-            )
+        _embedder = GeminiEmbedder(
+            api_key=settings.gemini_api_key,
+            model=settings.gemini_embedding_model,
+            dimension=settings.gemini_embedding_dimensions,
+        )
     return _embedder
 
 
 def get_llm_client(settings: Annotated[Settings, Depends(get_current_settings)]) -> LLMClient:
-    """Provide configured LLMClient instance."""
+    """Provide configured Gemini LLMClient instance."""
     global _llm_client
     if _llm_client is None:
-        if settings.gemini_api_key in {"mock-key-for-local", "test-key"}:
-            _llm_client = MockLLMClient()
-        else:
-            _llm_client = GeminiLLMClient(
-                api_key=settings.gemini_api_key,
-                model=settings.gemini_chat_model,
+        if not settings.gemini_api_key:
+            raise ServiceUnavailableError(
+                "Gemini", "GEMINI_API_KEY environment variable is not configured."
             )
+        _llm_client = GeminiLLMClient(
+            api_key=settings.gemini_api_key,
+            model=settings.gemini_chat_model,
+        )
     return _llm_client
 
 
